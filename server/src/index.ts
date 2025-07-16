@@ -15,6 +15,17 @@ const io = new Server(server, {
 
 io.on("connect", (socket) => {
   console.log("User connected", socket.id);
+  socket.join("public");
+
+  socket.on("join-room", (room) => {
+    console.log("Rooom joined", room);
+    socket.join(room);
+  });
+
+  socket.on("leave-room", (room) => {
+    console.log("Rooom left", room);
+    socket.leave(room);
+  });
 
   socket.on("message", (msg) => {
     console.log("Msg received:", msg);

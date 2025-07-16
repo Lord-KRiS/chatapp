@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { arrayType } from "../types/ArrayTypes";
+import { socket } from "../socket";
 
 function Rooms({
   currRoom,
@@ -23,8 +24,21 @@ function Rooms({
         { room: roomName, messages: [{ msg: "", sent: false }] },
       ]);
       setRoom(roomName);
+
+      //socket logic
+      socket.emit("join-room", roomName);
     }
     setRoomName("");
+  };
+
+  const handleDelete = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    room: string
+  ) => {
+    e.preventDefault();
+    if (room === currRoom) setRoom("public");
+    setArray((arr) => arr.filter((xx) => xx.room !== room));
+    socket.emit("leave-room", room);
   };
 
   return (
@@ -49,12 +63,7 @@ function Rooms({
             >
               <p>{room}</p>
               {room === "public" ? null : (
-                <div
-                  onClick={() => {
-                    if (room === currRoom) setRoom("public");
-                    setArray((arr) => arr.filter((xx) => xx.room !== room));
-                  }}
-                >
+                <button onClick={(e) => handleDelete(e, room)}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -69,7 +78,7 @@ function Rooms({
                       d="M6 18 18 6M6 6l12 12"
                     />
                   </svg>
-                </div>
+                </button>
               )}
             </div>
           ))}
