@@ -1,15 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import { socket } from "../socket";
+import type { arrayType } from "../types/ArrayTypes";
 
-interface arrayType {
-  msg: string;
-  sent: boolean;
-}
-
-function MessagingArea() {
-  const [messages, setMessages] = useState<arrayType[]>([
-    { msg: "", sent: false },
-  ]);
+function MessagingArea({
+  room,
+  array,
+  setArray,
+}: {
+  room: string;
+  array: arrayType[];
+  setArray: React.Dispatch<React.SetStateAction<arrayType[]>>;
+}) {
   const [message, setMessage] = useState("");
   const messagesEndRef = useRef(null);
 
@@ -17,16 +18,25 @@ function MessagingArea() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }
 
-  // function AddToMessages(sent: boolean) {
-
-  // }
-
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (message === "") return;
     socket.emit("msg from client", message);
-    setMessages((m) => [...m, { msg: message, sent: true }]);
+    const copyArr = [...array];
+    copyArr
+      .find((xx) => xx.room === room)
+      ?.messages.push({ msg: message, sent: true });
+    setArray(copyArr);
+    // setMessages((m) => [...m, { msg: message, sent: true }]);
     setMessage("");
+  }
+
+  function clearMessages(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    const copyArr = [...array];
+    //@ts-ignore
+    copyArr.find((xx) => xx.room === room).messages = [];
+    setArray(copyArr);
   }
 
   useEffect(() => {
@@ -36,27 +46,28 @@ function MessagingArea() {
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("msg from server", (msg) => {
-      setMessages((m) => [...m, { msg, sent: false }]);
+      //   setMessages((m) => [...m, { msg, sent: false }]);
     });
 
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
       socket.off("msg from server", (msg) => {
-        setMessages((m) => [...m, { msg, sent: false }]);
+        // setMessages((m) => [...m, { msg, sent: false }]);
       });
     };
   }, []);
 
-  useEffect(goToBottom, [messages]);
+  useEffect(goToBottom, [array]);
 
   return (
     <div className="flex flex-col min-h-screen relative overflow-y-auto overflow-x-hidden">
       <div className="flex-1 bg-black text-white  p-4">
         <p className="text-5xl text-center underline mb-4">Socket connected</p>
         <div className="flex flex-col gap-2">
-          {messages
-            .filter((M) => M.msg !== "")
+          {array
+            .find((xx) => xx.room === room)
+            ?.messages.filter((M) => M.msg !== "")
             .map((M, idx) => (
               <div
                 key={idx}
@@ -108,7 +119,7 @@ function MessagingArea() {
         </svg>
       </button>
       <button
-        onClick={() => setMessages([])}
+        onClick={clearMessages}
         className="bg-slate-200 p-2 cursor-pointer fixed top-2 right-2 rounded text-xl"
       >
         Clear
