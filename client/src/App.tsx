@@ -1,6 +1,6 @@
 import Rooms from "./components/Rooms";
 import MessagingArea from "./components/MessagingArea";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { arrayType } from "./types/ArrayTypes";
 
 function App() {
@@ -8,14 +8,10 @@ function App() {
   const [array, setArray] = useState<arrayType[]>([
     { room: "public", messages: [{ msg: "", sent: false }] },
   ]);
+
   return (
     <div className="flex">
-      <Rooms
-        currRoom={room}
-        setRoom={setRoom}
-        array={array}
-        setArray={setArray}
-      />
+      <Rooms setRoom={setRoom} array={array} setArray={setArray} />
       <MessagingArea room={room} array={array} setArray={setArray} />
     </div>
   );

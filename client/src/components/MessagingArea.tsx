@@ -35,7 +35,9 @@ function MessagingArea({
     e.preventDefault();
     const copyArr = [...array];
     //@ts-ignore
-    copyArr.find((xx) => xx.room === room).messages = [];
+    copyArr.find((xx) => xx.room === room).messages = [
+      { msg: "", sent: false },
+    ];
     setArray(copyArr);
   }
 

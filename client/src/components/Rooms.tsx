@@ -3,12 +3,10 @@ import type { arrayType } from "../types/ArrayTypes";
 import { socket } from "../socket";
 
 function Rooms({
-  currRoom,
   setRoom,
   array,
   setArray,
 }: {
-  currRoom: string;
   setRoom: React.Dispatch<React.SetStateAction<string>>;
   array: arrayType[];
   setArray: React.Dispatch<React.SetStateAction<arrayType[]>>;
@@ -36,8 +34,10 @@ function Rooms({
     room: string
   ) => {
     e.preventDefault();
-    if (room === currRoom) setRoom("public");
+    setRoom((currRoom) => (currRoom === room ? "public" : currRoom));
     setArray((arr) => arr.filter((xx) => xx.room !== room));
+
+    //socket logic
     socket.emit("leave-room", room);
   };
 
@@ -56,14 +56,13 @@ function Rooms({
           .map((xx) => xx.room)
           .filter((room) => room !== "")
           .map((room, idx) => (
-            <div
-              onClick={() => setRoom(room)}
-              key={idx}
-              className="flex justify-between"
-            >
-              <p>{room}</p>
+            <div key={idx} className="grid grid-cols-[8fr_1fr]">
+              <p onClick={() => setRoom(room)}>{room}</p>
               {room === "public" ? null : (
-                <button onClick={(e) => handleDelete(e, room)}>
+                <button
+                  onClick={(e) => handleDelete(e, room)}
+                  className="bg-gray-400"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
