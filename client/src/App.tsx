@@ -1,5 +1,13 @@
+import Rooms from "./components/Rooms";
+import MessagingArea from "./components/MessagingArea";
+
 function App() {
-  return <>client running </>;
+  return (
+    <div className="flex">
+      <Rooms />
+      <MessagingArea />
+    </div>
+  );
 }
 
 export default App;

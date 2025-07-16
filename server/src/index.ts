@@ -15,6 +15,15 @@ const io = new Server(server, {
 
 io.on("connect", (socket) => {
   console.log("User connected", socket.id);
+
+  socket.on("message", (msg) => {
+    console.log("Msg received:", msg);
+    io.emit("receive-message", msg);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected", socket.id);
+  });
 });
 
 app.get("/", (req, res) => {
