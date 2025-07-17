@@ -73,9 +73,9 @@ function MessagingArea({
   useEffect(goToBottom, [array]);
 
   return (
-    <div className="flex flex-col min-h-screen relative overflow-y-auto overflow-x-hidden">
+    <div className="flex flex-col min-h-screen relative overflow-y-auto">
       <div className="flex-1 bg-black text-white  p-4">
-        <p className="text-5xl text-center underline mb-4">Socket connected</p>
+        <p className="text-5xl text-center underline mb-4">{currRoom}</p>
         <div className="flex flex-col gap-2">
           {array
             .find((xx) => xx.room === currRoom)

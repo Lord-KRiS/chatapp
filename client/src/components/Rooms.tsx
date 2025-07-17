@@ -29,7 +29,7 @@ function Rooms({
 
     //socket logic
     socket.emit("join-room", roomName);
-    
+
     setRoomName("");
   };
 
@@ -46,26 +46,41 @@ function Rooms({
   };
 
   return (
-    <div className="">
-      <p>Add a Room:</p>
-      <input
-        type="text"
-        placeholder="RoomName"
-        value={roomName}
-        onChange={(e) => setRoomName(e.target.value)}
-      />
-      <button onClick={(e) => handleClick(e)}>Add</button>
-      <div className="flex flex-col">
+    <div className="text-white border-r border-gray-400 p-1">
+      <div className="text-center">
+        <p className="text-xl font-bold">Add a Room:</p>
+        <div className="flex">
+          <input
+            className="bg-gray-800 hover:bg-gray-600 focus:bg-gray-600 w-60 p-2 rounded border border-amber-900 outline-0"
+            type="text"
+            placeholder="RoomName"
+            value={roomName}
+            onChange={(e) => setRoomName(e.target.value)}
+          />
+          <button
+            className="cursor-pointer bg-gray-800 p-2 text-lg hover:bg-gray-600"
+            onClick={(e) => handleClick(e)}
+          >
+            Add
+          </button>
+        </div>
+      </div>
+      <div className="flex flex-col justify-center h-[90vh]">
         {array
           .map((xx) => xx.room)
           .filter((room) => room !== "")
           .map((room, idx) => (
-            <div key={idx} className="grid grid-cols-[8fr_1fr]">
-              <p onClick={() => setRoom(room)}>{room}</p>
+            <div
+              key={idx}
+              className="grid grid-cols-[8fr_1fr] items-center px-2 cursor-pointer"
+            >
+              <p className="text-xl" onClick={() => setRoom(room)}>
+                {room}
+              </p>
               {room === "public" ? null : (
                 <button
                   onClick={(e) => handleDelete(e, room)}
-                  className="bg-gray-400"
+                  className="bg-gray-400 cursor-pointer flex justify-center"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

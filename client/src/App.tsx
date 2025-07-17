@@ -10,7 +10,7 @@ function App() {
   ]);
 
   return (
-    <div className="flex">
+    <div className="bg-black grid grid-cols-[1fr_6fr]">
       <Rooms setRoom={setRoom} array={array} setArray={setArray} />
       <MessagingArea currRoom={room} array={array} setArray={setArray} />
     </div>
