@@ -8,7 +8,7 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", "http://localhost:5174"],
     credentials: true,
   },
 });
@@ -25,6 +25,11 @@ io.on("connect", (socket) => {
   socket.on("leave-room", (room) => {
     console.log("Rooom left", room);
     socket.leave(room);
+  });
+
+  socket.on("msg for room", (room, message) => {
+    console.log(`Message received ${message} for room ${room}`);
+    socket.to(room).emit("msg for clients", message);
   });
 
   socket.on("message", (msg) => {

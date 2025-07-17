@@ -16,16 +16,19 @@ function Rooms({
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const alreadyThere = array.find((xx) => xx.room === roomName);
-    if (!alreadyThere) {
-      setArray((arr) => [
-        ...arr,
-        { room: roomName, messages: [{ msg: "", sent: false }] },
-      ]);
-      setRoom(roomName);
-
-      //socket logic
-      socket.emit("join-room", roomName);
+    if (alreadyThere) {
+      setRoomName("");
+      return;
     }
+
+    socket.emit("join-room", roomName);
+    setArray((arr) => [
+      ...arr,
+      { room: roomName, messages: [{ msg: "", sent: false }] },
+    ]);
+    setRoom(roomName);
+
+    //socket logic
     setRoomName("");
   };
 

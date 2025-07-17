@@ -21,24 +21,27 @@ function MessagingArea({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (message === "") return;
-    socket.emit("msg from client", message);
-    const copyArr = [...array];
-    copyArr
-      .find((xx) => xx.room === room)
-      ?.messages.push({ msg: message, sent: true });
-    setArray(copyArr);
-    // setMessages((m) => [...m, { msg: message, sent: true }]);
+    setArray((prev) =>
+      prev.map((r) =>
+        r.room === room
+          ? { ...r, messages: [...r.messages, { msg: message, sent: true }] }
+          : r
+      )
+    );
+
+    //socket logic
+    socket.emit("msg for room", room, message);
+
     setMessage("");
   }
 
   function clearMessages(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
-    const copyArr = [...array];
-    //@ts-ignore
-    copyArr.find((xx) => xx.room === room).messages = [
-      { msg: "", sent: false },
-    ];
-    setArray(copyArr);
+    setArray((prev) =>
+      prev.map((r) =>
+        r.room === room ? { ...r, messages: [{ msg: "", sent: false }] } : r
+      )
+    );
   }
 
   useEffect(() => {
@@ -47,8 +50,14 @@ function MessagingArea({
 
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
-    socket.on("msg from server", (msg) => {
-      //   setMessages((m) => [...m, { msg, sent: false }]);
+    socket.on("msg for clients", (message) => {
+      setArray((prev) =>
+        prev.map((r) =>
+          r.room === room
+            ? { ...r, messages: [...r.messages, { msg: message, sent: false }] }
+            : r
+        )
+      );
     });
 
     return () => {
