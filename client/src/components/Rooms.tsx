@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { arrayType } from "../types/ArrayTypes";
 import { socket } from "../socket";
+import { colors } from "../colors";
 
 function Rooms({
   setRoom,
@@ -12,6 +13,16 @@ function Rooms({
   setArray: React.Dispatch<React.SetStateAction<arrayType[]>>;
 }) {
   const [roomName, setRoomName] = useState("");
+
+  const getColor = (curRoom: string) => {
+    const idx = array
+      .map((xx) => xx.room)
+      .findIndex((room) => room === curRoom);
+
+    console.log(colors[idx % colors.length]);
+
+    return colors[idx % colors.length];
+  };
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -58,29 +69,34 @@ function Rooms({
             onChange={(e) => setRoomName(e.target.value)}
           />
           <button
-            className="cursor-pointer bg-gray-800 p-2 text-lg hover:bg-gray-600"
+            className="cursor-pointer bg-orange-800 p-2 text-lg hover:bg-orange-600"
             onClick={(e) => handleClick(e)}
           >
             Add
           </button>
         </div>
       </div>
-      <div className="flex flex-col justify-center h-[90vh]">
+      <div className="flex flex-col gap-2 justify-center h-[90vh]">
         {array
           .map((xx) => xx.room)
           .filter((room) => room !== "")
           .map((room, idx) => (
             <div
               key={idx}
-              className="grid grid-cols-[8fr_1fr] items-center px-2 cursor-pointer"
+              className="grid grid-cols-[8fr_1fr] items-center px-2 cursor-pointer "
             >
-              <p className="text-xl" onClick={() => setRoom(room)}>
+              <p
+                className={`text-xl bg-${getColor(
+                  room
+                )}-500 text-center py-2 rounded-2xl`}
+                onClick={() => setRoom(room)}
+              >
                 {room}
               </p>
               {room === "public" ? null : (
                 <button
                   onClick={(e) => handleDelete(e, room)}
-                  className="bg-gray-400 cursor-pointer flex justify-center"
+                  className="bg-gray-400 cursor-pointer flex justify-center rounded-xl p-2"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

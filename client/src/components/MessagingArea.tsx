@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { socket } from "../socket";
 import type { arrayType } from "../types/ArrayTypes";
+import { colors } from "../colors";
 
 function MessagingArea({
   currRoom,
@@ -13,6 +14,21 @@ function MessagingArea({
 }) {
   const [message, setMessage] = useState("");
   const messagesEndRef = useRef(null);
+
+  const getClasses = (curRoom: string) => {
+    const idx = array
+      .map((xx) => xx.room)
+      .findIndex((room) => room === curRoom);
+
+    console.log(colors[idx % colors.length]);
+
+    const color = colors[idx % colors.length];
+
+    return [
+      `ml-auto bg-${color}-100 text-black text-right mr-2`,
+      `mr-auto bg-${color}-800 text-white text-left ml-2`,
+    ];
+  };
 
   function goToBottom() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -66,37 +82,38 @@ function MessagingArea({
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
-      socket.on("msg for clients", onMsg);
+      socket.off("msg for clients", onMsg);
     };
   }, []);
 
   useEffect(goToBottom, [array]);
 
   return (
-    <div className="flex flex-col min-h-screen relative overflow-y-auto">
-      <div className="flex-1 bg-black text-white  p-4">
-        <p className="text-5xl text-center underline mb-4">{currRoom}</p>
-        <div className="flex flex-col gap-2">
-          {array
-            .find((xx) => xx.room === currRoom)
-            ?.messages.filter((M) => M.msg !== "")
-            .map((M, idx) => (
-              <div
-                key={idx}
-                className={`text-xl py-2 px-4 rounded-lg break-words max-w-[70%] ${
-                  M.sent
-                    ? "ml-auto bg-green-800 text-right"
-                    : "mr-auto bg-blue-800 text-left"
-                }`}
-              >
-                {M.msg}
-              </div>
-            ))}
+    <div className="flex flex-col min-h-screen relative ">
+      <div className="flex flex-col h-[93vh]">
+        <div className="flex-1 overflow-y-auto bg-black text-white p-4">
+          <p className="text-5xl text-center underline mb-4">{currRoom}</p>
+          <div className="flex flex-col gap-2">
+            {array
+              .find((xx) => xx.room === currRoom)
+              ?.messages.filter((M) => M.msg !== "")
+              .map((M, idx) => (
+                <div
+                  key={idx}
+                  className={`text-xl py-2 px-4 rounded-lg break-words max-w-[70%] ${
+                    M.sent ? getClasses(currRoom)[0] : getClasses(currRoom)[1]
+                  }`}
+                >
+                  {M.msg}
+                </div>
+              ))}
+          </div>
+          <div ref={messagesEndRef} />
         </div>
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div className="w-full grid grid-cols-[8fr_1fr] border-t text-2xl">
+        <div className="right-0 w-full grid grid-cols-[8fr_1fr] border-t text-2xl">
           <input
             type="text"
             className="p-3 border-r-2 outline-none bg-blue-300"
@@ -107,7 +124,6 @@ function MessagingArea({
           <button type="submit" className="p-3 bg-green-300">
             Send server
           </button>
-          <div ref={messagesEndRef} />
         </div>
       </form>
 
@@ -141,3 +157,16 @@ function MessagingArea({
 }
 
 export default MessagingArea;
+
+{
+  /* <div className="flex flex-col h-screen">
+    <div className="flex-1 overflow-y-auto px-4 py-2 space-y-2">
+      {array
+        .find((xx) => xx.room === currRoom)
+        ?.messages.map((msg, idx) => (
+          <div key={idx} className="bg-yellow-200 p-2 rounded">
+            {msg.msg}
+          </div>
+        ))}
+    </div> */
+}
