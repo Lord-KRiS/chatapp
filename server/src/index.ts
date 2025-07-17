@@ -29,7 +29,7 @@ io.on("connect", (socket) => {
 
   socket.on("msg for room", (room, message) => {
     console.log(`Message received ${message} for room ${room}`);
-    socket.to(room).emit("msg for clients", message);
+    socket.to(room).emit("msg for clients", room, message);
   });
 
   socket.on("message", (msg) => {

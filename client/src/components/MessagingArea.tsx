@@ -3,11 +3,11 @@ import { socket } from "../socket";
 import type { arrayType } from "../types/ArrayTypes";
 
 function MessagingArea({
-  room,
+  currRoom,
   array,
   setArray,
 }: {
-  room: string;
+  currRoom: string;
   array: arrayType[];
   setArray: React.Dispatch<React.SetStateAction<arrayType[]>>;
 }) {
@@ -20,17 +20,19 @@ function MessagingArea({
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
     if (message === "") return;
+
     setArray((prev) =>
       prev.map((r) =>
-        r.room === room
+        r.room === currRoom
           ? { ...r, messages: [...r.messages, { msg: message, sent: true }] }
           : r
       )
     );
 
     //socket logic
-    socket.emit("msg for room", room, message);
+    socket.emit("msg for room", currRoom, message);
 
     setMessage("");
   }
@@ -39,7 +41,7 @@ function MessagingArea({
     e.preventDefault();
     setArray((prev) =>
       prev.map((r) =>
-        r.room === room ? { ...r, messages: [{ msg: "", sent: false }] } : r
+        r.room === currRoom ? { ...r, messages: [{ msg: "", sent: false }] } : r
       )
     );
   }
@@ -47,10 +49,7 @@ function MessagingArea({
   useEffect(() => {
     const onConnect = () => console.log("connected", socket.id);
     const onDisconnect = () => console.log("disconnected");
-
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-    socket.on("msg for clients", (message) => {
+    const onMsg = (room: string, message: string) => {
       setArray((prev) =>
         prev.map((r) =>
           r.room === room
@@ -58,14 +57,16 @@ function MessagingArea({
             : r
         )
       );
-    });
+    };
+
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+    socket.on("msg for clients", onMsg);
 
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
-      socket.off("msg from server", (msg) => {
-        // setMessages((m) => [...m, { msg, sent: false }]);
-      });
+      socket.on("msg for clients", onMsg);
     };
   }, []);
 
@@ -77,7 +78,7 @@ function MessagingArea({
         <p className="text-5xl text-center underline mb-4">Socket connected</p>
         <div className="flex flex-col gap-2">
           {array
-            .find((xx) => xx.room === room)
+            .find((xx) => xx.room === currRoom)
             ?.messages.filter((M) => M.msg !== "")
             .map((M, idx) => (
               <div

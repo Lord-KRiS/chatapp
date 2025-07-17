@@ -12,7 +12,7 @@ function App() {
   return (
     <div className="flex">
       <Rooms setRoom={setRoom} array={array} setArray={setArray} />
-      <MessagingArea room={room} array={array} setArray={setArray} />
+      <MessagingArea currRoom={room} array={array} setArray={setArray} />
     </div>
   );
 }
