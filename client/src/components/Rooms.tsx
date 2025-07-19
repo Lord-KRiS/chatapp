@@ -34,8 +34,8 @@ function Rooms({
     }
 
     setArray((arr) => [
-      ...arr,
       { room: roomName, messages: [{ msg: "", sent: false }], unread: 0 },
+      ...arr,
     ]);
     setRoom(roomName);
 
@@ -93,7 +93,7 @@ function Rooms({
           .filter((xx) => xx.room !== "")
           .map((xx, idx) => (
             <RoomItem
-            key={idx}
+              key={idx}
               xx={xx}
               onRoomClick={onRoomClick}
               handleRoomDelete={handleRoomDelete}
@@ -111,7 +111,6 @@ const RoomItem = ({
   onRoomClick,
   handleRoomDelete,
 }: {
-  idx: number;
   xx: arrayType;
   onRoomClick: (room: string) => void;
   handleRoomDelete: (
@@ -123,16 +122,14 @@ const RoomItem = ({
   const color = useAtomValue(useMemo(() => getColorAtom(xx.room), [xx.room]));
 
   return (
-    <div
-      className="grid grid-cols-[8fr_1fr] items-center px-2 cursor-pointer"
-    >
+    <div className="grid grid-cols-[8fr_1fr] items-center px-2 cursor-pointer">
       <div
         className={`text-xl bg-${color}-500 text-center py-2 rounded-2xl flex justify-between px-10 items-center`}
         onClick={() => onRoomClick(xx.room)}
       >
         <p className="font-medium">{xx.room}</p>
         {xx.unread ? (
-          <p className="bg-black font-bold rounded-full h-10 w-10 flex justify-center items-center">
+          <p className="bg-black font-bold rounded-full h-8 w-8 flex justify-center items-center">
             {xx.unread}
           </p>
         ) : null}

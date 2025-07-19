@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { socket } from "../socket";
 import type { arrayType } from "../types/ArrayTypes";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtomValue } from "jotai";
 import { getClassesAtom } from "../utility/atoms";
+import { changeElPosn } from "../utility/changeEl";
 // import useClassesAndColors from "../utility/atoms";
 // import { getClasses } from "../utility/useClassesAndColors";
 
@@ -55,8 +56,8 @@ function MessagingArea({
     const onConnect = () => console.log("connected", socket.id);
     const onDisconnect = () => console.log("disconnected");
     const onMsg = (room: string, message: string) => {
-      setArray((prev) =>
-        prev.map((r) =>
+      setArray((prev) => {
+        const newArr = prev.map((r) =>
           r.room === room
             ? {
                 ...r,
@@ -64,8 +65,11 @@ function MessagingArea({
                 unread: r.room === currRoom ? 0 : r.unread + 1,
               }
             : r
-        )
-      );
+        );
+        const idx = newArr.findIndex((xx) => xx.room === room);
+        changeElPosn(newArr, idx, 0);
+        return newArr;
+      });
     };
 
     socket.on("connect", onConnect);
