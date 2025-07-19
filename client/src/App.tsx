@@ -1,6 +1,6 @@
 import Rooms from "./components/Rooms";
 import MessagingArea from "./components/MessagingArea";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { arrayType } from "./types/ArrayTypes";
 
 function App() {
