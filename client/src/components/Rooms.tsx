@@ -2,7 +2,6 @@ import { useState } from "react";
 import type { arrayType } from "../types/ArrayTypes";
 import { socket } from "../socket";
 import useClassesAndColors from "../utility/useClassesAndColors";
-// import { addColorToMap, getColor } from "../utility/useClassesAndColors";
 
 function Rooms({
   setRoom,
@@ -28,9 +27,10 @@ function Rooms({
       return;
     }
 
+    //newly added rooms appear at top
     setArray((arr) => [
-      ...arr,
       { room: roomName, messages: [{ msg: "", sent: false }], unread: 0 },
+      ...arr,
     ]);
     setRoom(roomName);
 
@@ -99,7 +99,7 @@ function Rooms({
               >
                 <p className="font-medium">{xx.room}</p>
                 {xx.unread ? (
-                  <p className="bg-black font-bold rounded-full h-10 w-10 flex justify-center items-center">
+                  <p className="bg-black font-bold rounded-full h-7 w-7 flex justify-center items-center">
                     {xx.unread}
                   </p>
                 ) : null}

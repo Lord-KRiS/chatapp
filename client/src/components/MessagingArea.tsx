@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { socket } from "../socket";
 import type { arrayType } from "../types/ArrayTypes";
 import useClassesAndColors from "../utility/useClassesAndColors";
-// import { getClasses } from "../utility/useClassesAndColors";
+import { arraymove } from "../utility/moveEl";
 
 function MessagingArea({
   currRoom,
@@ -53,8 +53,8 @@ function MessagingArea({
     const onConnect = () => console.log("connected", socket.id);
     const onDisconnect = () => console.log("disconnected");
     const onMsg = (room: string, message: string) => {
-      setArray((prev) =>
-        prev.map((r) =>
+      setArray((prev) => {
+        const newArr = prev.map((r) =>
           r.room === room
             ? {
                 ...r,
@@ -62,8 +62,12 @@ function MessagingArea({
                 unread: r.room === currRoom ? 0 : r.unread + 1,
               }
             : r
-        )
-      );
+        );
+        console.log("new ARr", newArr);
+        arraymove(newArr, newArr.length - 1, 0);
+        console.log("new ARr", newArr);
+        return newArr;
+      });
     };
 
     socket.on("connect", onConnect);
