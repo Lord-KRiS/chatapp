@@ -1,7 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { socket } from "../socket";
 import type { arrayType } from "../types/ArrayTypes";
-import useClassesAndColors from "../utility/useClassesAndColors";
+import { useAtomValue, useSetAtom } from "jotai";
+import { getClassesAtom } from "../utility/atoms";
+// import useClassesAndColors from "../utility/atoms";
 // import { getClasses } from "../utility/useClassesAndColors";
 
 function MessagingArea({
@@ -15,7 +17,7 @@ function MessagingArea({
 }) {
   const [message, setMessage] = useState("");
   const messagesEndRef = useRef(null);
-  const { getClasses } = useClassesAndColors();
+  // const getClasses =
 
   function goToBottom() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -91,14 +93,12 @@ function MessagingArea({
               .find((xx) => xx.room === currRoom)
               ?.messages.filter((M) => M.msg !== "")
               .map((M, idx) => (
-                <div
+                <MessageItem
                   key={idx}
-                  className={`text-xl py-2 px-4 rounded-lg break-words max-w-[70%] ${
-                    M.sent ? getClasses(currRoom)[0] : getClasses(currRoom)[1]
-                  }`}
-                >
-                  {M.msg}
-                </div>
+                  isSent={M.sent}
+                  room={currRoom}
+                  message={M.msg}
+                />
               ))}
           </div>
           <div ref={messagesEndRef} />
@@ -151,15 +151,23 @@ function MessagingArea({
 
 export default MessagingArea;
 
-{
-  /* <div className="flex flex-col h-screen">
-    <div className="flex-1 overflow-y-auto px-4 py-2 space-y-2">
-      {array
-        .find((xx) => xx.room === currRoom)
-        ?.messages.map((msg, idx) => (
-          <div key={idx} className="bg-yellow-200 p-2 rounded">
-            {msg.msg}
-          </div>
-        ))}
-    </div> */
-}
+const MessageItem = ({
+  isSent,
+  message,
+  room,
+}: {
+  isSent: boolean;
+  message: string;
+  room: string;
+}) => {
+  const classes = useAtomValue(useMemo(() => getClassesAtom(room), [room]));
+  return (
+    <div
+      className={`text-xl py-2 px-4 rounded-lg break-words max-w-[70%] ${
+        isSent ? classes[0] : classes[1]
+      }`}
+    >
+      {message}
+    </div>
+  );
+};

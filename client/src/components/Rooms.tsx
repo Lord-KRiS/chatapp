@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { arrayType } from "../types/ArrayTypes";
 import { socket } from "../socket";
-import useClassesAndColors from "../utility/useClassesAndColors";
+import { useAtomValue, useSetAtom } from "jotai";
+import { addColorToMapAtom, getColorAtom } from "../utility/atoms";
+// import useJotai from "../utility/useJotai";
+// import useClassesAndColors from "../utility/useClassesAndColors";
 // import { addColorToMap, getColor } from "../utility/useClassesAndColors";
 
 function Rooms({
@@ -14,7 +17,9 @@ function Rooms({
   setArray: React.Dispatch<React.SetStateAction<arrayType[]>>;
 }) {
   const [roomName, setRoomName] = useState("");
-  const { addColorToMap, getColor } = useClassesAndColors();
+  const addColorToMap = useSetAtom(addColorToMapAtom);
+  // const getColor = useAtom(getColorAtom());
+  // const { addColorToMap, getColor } = useClassesAndColors();
 
   const handleAddRoomEvent = (
     e:
@@ -35,7 +40,7 @@ function Rooms({
     setRoom(roomName);
 
     //adding room,color to the map
-    addColorToMap(roomName, array);
+    addColorToMap({ room: roomName, array });
 
     //socket logic
     socket.emit("join-room", roomName);
@@ -87,45 +92,12 @@ function Rooms({
           // .map((xx) => xx.room)
           .filter((xx) => xx.room !== "")
           .map((xx, idx) => (
-            <div
-              key={idx}
-              className="grid grid-cols-[8fr_1fr] items-center px-2 cursor-pointer"
-            >
-              <div
-                className={`text-xl bg-${getColor(
-                  xx.room
-                )}-500 text-center py-2 rounded-2xl flex justify-between px-10 items-center`}
-                onClick={() => onRoomClick(xx.room)}
-              >
-                <p className="font-medium">{xx.room}</p>
-                {xx.unread ? (
-                  <p className="bg-black font-bold rounded-full h-10 w-10 flex justify-center items-center">
-                    {xx.unread}
-                  </p>
-                ) : null}
-              </div>
-              {xx.room === "public" ? null : (
-                <button
-                  onClick={(e) => handleRoomDelete(e, xx.room)}
-                  className="bg-gray-400 cursor-pointer flex justify-center rounded-xl p-2"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                    className="size-6"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M6 18 18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              )}
-            </div>
+            <RoomItem
+            key={idx}
+              xx={xx}
+              onRoomClick={onRoomClick}
+              handleRoomDelete={handleRoomDelete}
+            />
           ))}
       </div>
     </div>
@@ -133,3 +105,59 @@ function Rooms({
 }
 
 export default Rooms;
+
+const RoomItem = ({
+  xx,
+  onRoomClick,
+  handleRoomDelete,
+}: {
+  idx: number;
+  xx: arrayType;
+  onRoomClick: (room: string) => void;
+  handleRoomDelete: (
+    e: React.MouseEvent<HTMLButtonElement>,
+    room: string
+  ) => void;
+}) => {
+  // const color = useJotai(xx.room);
+  const color = useAtomValue(useMemo(() => getColorAtom(xx.room), [xx.room]));
+
+  return (
+    <div
+      className="grid grid-cols-[8fr_1fr] items-center px-2 cursor-pointer"
+    >
+      <div
+        className={`text-xl bg-${color}-500 text-center py-2 rounded-2xl flex justify-between px-10 items-center`}
+        onClick={() => onRoomClick(xx.room)}
+      >
+        <p className="font-medium">{xx.room}</p>
+        {xx.unread ? (
+          <p className="bg-black font-bold rounded-full h-10 w-10 flex justify-center items-center">
+            {xx.unread}
+          </p>
+        ) : null}
+      </div>
+      {xx.room === "public" ? null : (
+        <button
+          onClick={(e) => handleRoomDelete(e, xx.room)}
+          className="bg-gray-400 cursor-pointer flex justify-center rounded-xl p-2"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            stroke="currentColor"
+            className="size-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6 18 18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      )}
+    </div>
+  );
+};
