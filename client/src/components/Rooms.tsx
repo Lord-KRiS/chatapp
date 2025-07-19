@@ -1,7 +1,8 @@
 import { useState } from "react";
 import type { arrayType } from "../types/ArrayTypes";
 import { socket } from "../socket";
-import { getColor } from "../utility/classes";
+import useClassesAndColors from "../utility/useClassesAndColors";
+// import { addColorToMap, getColor } from "../utility/useClassesAndColors";
 
 function Rooms({
   setRoom,
@@ -13,6 +14,7 @@ function Rooms({
   setArray: React.Dispatch<React.SetStateAction<arrayType[]>>;
 }) {
   const [roomName, setRoomName] = useState("");
+  const { addColorToMap, getColor } = useClassesAndColors();
 
   const handleAddRoomEvent = (
     e:
@@ -31,6 +33,9 @@ function Rooms({
       { room: roomName, messages: [{ msg: "", sent: false }], unread: 0 },
     ]);
     setRoom(roomName);
+
+    //adding room,color to the map
+    addColorToMap(roomName, array);
 
     //socket logic
     socket.emit("join-room", roomName);
@@ -88,7 +93,6 @@ function Rooms({
             >
               <div
                 className={`text-xl bg-${getColor(
-                  array,
                   xx.room
                 )}-500 text-center py-2 rounded-2xl flex justify-between px-10 items-center`}
                 onClick={() => onRoomClick(xx.room)}
