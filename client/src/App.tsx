@@ -12,7 +12,7 @@ function App() {
   // useEffect(() => console.log("111111", room), [room]);
 
   return (
-    <div className="bg-black grid grid-cols-[1fr_6fr]">
+    <div className="grid grid-cols-[1fr_6fr]">
       <Rooms setRoom={setRoom} array={array} setArray={setArray} />
       <MessagingArea currRoom={room} array={array} setArray={setArray} />
     </div>

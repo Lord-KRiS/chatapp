@@ -57,12 +57,12 @@ function Rooms({
   };
 
   return (
-    <div className="text-white border-r border-gray-400 p-1">
+    <div className="bg-black text-white border-r-4 border-purple-800 p-1">
       <div className="text-center">
-        <p className="text-xl font-bold">Add a Room:</p>
-        <div className="flex">
+        <p className="text-2xl font-bold text-purple-400 mb-4">Add a Room:</p>
+        <div className="flex justify-center">
           <input
-            className="bg-gray-800 hover:bg-gray-600 focus:bg-gray-600 w-60 p-2 rounded border border-amber-900 outline-0"
+            className="bg-gray-800 hover:bg-gray-600 focus:bg-gray-600 w-70 p-2 rounded border border-purple-600 outline-0"
             type="text"
             placeholder="RoomName"
             value={roomName}
@@ -70,7 +70,7 @@ function Rooms({
             onKeyDown={(e) => e.key === "Enter" && handleAddRoomEvent(e)}
           />
           <button
-            className="cursor-pointer bg-orange-800 p-2 text-lg hover:bg-orange-600"
+            className="cursor-pointer bg-purple-600 p-2 text-lg hover:bg-purple-800"
             onClick={(e) => handleAddRoomEvent(e)}
           >
             Add
@@ -90,7 +90,7 @@ function Rooms({
                 className={`text-xl bg-${getColor(
                   array,
                   xx.room
-                )}-500 text-center py-2 rounded-2xl flex justify-center items-center gap-10`}
+                )}-500 text-center py-2 rounded-2xl flex justify-between px-10 items-center`}
                 onClick={() => onRoomClick(xx.room)}
               >
                 <p className="font-medium">{xx.room}</p>

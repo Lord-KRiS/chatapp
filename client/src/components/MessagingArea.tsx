@@ -79,9 +79,11 @@ function MessagingArea({
 
   return (
     <div className="flex flex-col min-h-screen relative ">
-      <div className="flex flex-col h-[93vh]">
-        <div className="flex-1 overflow-y-auto bg-black text-white p-4">
-          <p className="text-5xl text-center underline mb-4">{currRoom}</p>
+      <div className="flex flex-col h-[96vh]">
+        <div className="flex-1 overflow-y-auto bg-slate-400 text-white p-4">
+          <p className="text-5xl text-center font-medium underline mb-4 text-purple-900">
+            {currRoom}
+          </p>
           <div className="flex flex-col gap-2">
             {array
               .find((xx) => xx.room === currRoom)
@@ -104,7 +106,7 @@ function MessagingArea({
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div className="right-0 w-full grid grid-cols-[8fr_1fr] border-t text-2xl">
+        <div className="fixedw-full grid grid-cols-[8fr_1fr] border-t text-2xl">
           <input
             type="text"
             className="p-3 border-r-2 outline-none bg-blue-300"
@@ -120,7 +122,7 @@ function MessagingArea({
 
       <button
         onClick={goToBottom}
-        className="bg-slate-200 p-2 cursor-pointer fixed bottom-2 right-2 rounded"
+        className="bg-gray-800 p-2 cursor-pointer fixed bottom-2 right-2 rounded"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -128,7 +130,7 @@ function MessagingArea({
           viewBox="0 0 24 24"
           strokeWidth="1.5"
           stroke="currentColor"
-          className="size-6"
+          className="size-6 text-gray-300"
         >
           <path
             strokeLinecap="round"
@@ -139,7 +141,7 @@ function MessagingArea({
       </button>
       <button
         onClick={clearMessages}
-        className="bg-slate-200 p-2 cursor-pointer fixed top-2 right-2 rounded text-xl"
+        className="bg-gray-800 text-gray-300 p-2 cursor-pointer fixed top-2 right-2 rounded text-xl"
       >
         Clear
       </button>
