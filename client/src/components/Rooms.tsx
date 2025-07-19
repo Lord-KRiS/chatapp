@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { arrayType } from "../types/ArrayTypes";
 import { socket } from "../socket";
 import { colors } from "../colors";
+import { getColor } from "../utility/classes";
 
 function Rooms({
   setRoom,
@@ -14,15 +15,15 @@ function Rooms({
 }) {
   const [roomName, setRoomName] = useState("");
 
-  const getColor = (curRoom: string) => {
-    const idx = array
-      .map((xx) => xx.room)
-      .findIndex((room) => room === curRoom);
+  // const getColor = (array:arrayType[], curRoom: string) => {
+  //   const idx = array
+  //     .map((xx) => xx.room)
+  //     .findIndex((room) => room === curRoom);
 
-    console.log(colors[idx % colors.length]);
+  //   console.log(colors[idx % colors.length]);
 
-    return colors[idx % colors.length];
-  };
+  //   return colors[idx % colors.length];
+  // };
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -87,6 +88,7 @@ function Rooms({
             >
               <p
                 className={`text-xl bg-${getColor(
+                  array,
                   room
                 )}-500 text-center py-2 rounded-2xl`}
                 onClick={() => setRoom(room)}

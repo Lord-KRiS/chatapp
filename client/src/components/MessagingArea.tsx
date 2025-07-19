@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { socket } from "../socket";
 import type { arrayType } from "../types/ArrayTypes";
 import { colors } from "../colors";
+import { getClasses } from "../utility/classes";
 
 function MessagingArea({
   currRoom,
@@ -15,20 +16,20 @@ function MessagingArea({
   const [message, setMessage] = useState("");
   const messagesEndRef = useRef(null);
 
-  const getClasses = (curRoom: string) => {
-    const idx = array
-      .map((xx) => xx.room)
-      .findIndex((room) => room === curRoom);
+  // const getClasses = (curRoom: string) => {
+  //   const idx = array
+  //     .map((xx) => xx.room)
+  //     .findIndex((room) => room === curRoom);
 
-    console.log(colors[idx % colors.length]);
+  //   console.log(colors[idx % colors.length]);
 
-    const color = colors[idx % colors.length];
+  //   const color = colors[idx % colors.length];
 
-    return [
-      `ml-auto bg-${color}-100 text-black text-right mr-2`,
-      `mr-auto bg-${color}-800 text-white text-left ml-2`,
-    ];
-  };
+  //   return [
+  //     `ml-auto bg-${color}-100 text-black text-right mr-2`,
+  //     `mr-auto bg-${color}-800 text-white text-left ml-2`,
+  //   ];
+  // };
 
   function goToBottom() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -101,7 +102,9 @@ function MessagingArea({
                 <div
                   key={idx}
                   className={`text-xl py-2 px-4 rounded-lg break-words max-w-[70%] ${
-                    M.sent ? getClasses(currRoom)[0] : getClasses(currRoom)[1]
+                    M.sent
+                      ? getClasses(array, currRoom)[0]
+                      : getClasses(array, currRoom)[1]
                   }`}
                 >
                   {M.msg}
