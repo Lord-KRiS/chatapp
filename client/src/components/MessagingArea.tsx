@@ -87,7 +87,7 @@ function MessagingArea({
 
   return (
     <div className="flex flex-col min-h-screen relative ">
-      <div className="flex flex-col h-[96vh]">
+      <div className="flex flex-col h-[92vh]">
         <div className="flex-1 overflow-y-auto bg-slate-400 text-white p-4">
           <p className="text-5xl text-center font-medium underline mb-4 text-purple-900">
             {currRoom}
@@ -110,15 +110,15 @@ function MessagingArea({
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div className="fixedw-full grid grid-cols-[8fr_1fr] border-t text-2xl">
+        <div className="h-[10vh] grid grid-cols-[8fr_1fr] border-t text-2xl">
           <input
             type="text"
-            className="p-3 border-r-2 outline-none bg-blue-300"
+            className="px-3 border-r-2 outline-none bg-blue-300"
             placeholder="text to the server"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
           />
-          <button type="submit" className="p-3 bg-green-300">
+          <button type="submit" className="px-3 bg-green-300">
             Send server
           </button>
         </div>
