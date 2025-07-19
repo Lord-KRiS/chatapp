@@ -6,4 +6,5 @@ interface messageType {
 export interface arrayType {
   room: string;
   messages: messageType[];
+  unread: number;
 }

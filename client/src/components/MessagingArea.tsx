@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { socket } from "../socket";
 import type { arrayType } from "../types/ArrayTypes";
-import { colors } from "../colors";
 import { getClasses } from "../utility/classes";
 
 function MessagingArea({
@@ -15,21 +14,6 @@ function MessagingArea({
 }) {
   const [message, setMessage] = useState("");
   const messagesEndRef = useRef(null);
-
-  // const getClasses = (curRoom: string) => {
-  //   const idx = array
-  //     .map((xx) => xx.room)
-  //     .findIndex((room) => room === curRoom);
-
-  //   console.log(colors[idx % colors.length]);
-
-  //   const color = colors[idx % colors.length];
-
-  //   return [
-  //     `ml-auto bg-${color}-100 text-black text-right mr-2`,
-  //     `mr-auto bg-${color}-800 text-white text-left ml-2`,
-  //   ];
-  // };
 
   function goToBottom() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -70,7 +54,11 @@ function MessagingArea({
       setArray((prev) =>
         prev.map((r) =>
           r.room === room
-            ? { ...r, messages: [...r.messages, { msg: message, sent: false }] }
+            ? {
+                ...r,
+                messages: [...r.messages, { msg: message, sent: false }],
+                unread: r.room === currRoom ? 0 : r.unread + 1,
+              }
             : r
         )
       );
@@ -85,7 +73,7 @@ function MessagingArea({
       socket.off("disconnect", onDisconnect);
       socket.off("msg for clients", onMsg);
     };
-  }, []);
+  }, [currRoom, setArray]);
 
   useEffect(goToBottom, [array]);
 

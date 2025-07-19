@@ -1,7 +1,6 @@
 import { useState } from "react";
 import type { arrayType } from "../types/ArrayTypes";
 import { socket } from "../socket";
-import { colors } from "../colors";
 import { getColor } from "../utility/classes";
 
 function Rooms({
@@ -15,17 +14,11 @@ function Rooms({
 }) {
   const [roomName, setRoomName] = useState("");
 
-  // const getColor = (array:arrayType[], curRoom: string) => {
-  //   const idx = array
-  //     .map((xx) => xx.room)
-  //     .findIndex((room) => room === curRoom);
-
-  //   console.log(colors[idx % colors.length]);
-
-  //   return colors[idx % colors.length];
-  // };
-
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleAddRoomEvent = (
+    e:
+      | React.MouseEvent<HTMLButtonElement>
+      | React.KeyboardEvent<HTMLInputElement>
+  ) => {
     e.preventDefault();
     const alreadyThere = array.find((xx) => xx.room === roomName);
     if (alreadyThere || roomName === "") {
@@ -35,7 +28,7 @@ function Rooms({
 
     setArray((arr) => [
       ...arr,
-      { room: roomName, messages: [{ msg: "", sent: false }] },
+      { room: roomName, messages: [{ msg: "", sent: false }], unread: 0 },
     ]);
     setRoom(roomName);
 
@@ -45,7 +38,7 @@ function Rooms({
     setRoomName("");
   };
 
-  const handleDelete = (
+  const handleRoomDelete = (
     e: React.MouseEvent<HTMLButtonElement>,
     room: string
   ) => {
@@ -55,6 +48,12 @@ function Rooms({
 
     //socket logic
     socket.emit("leave-room", room);
+  };
+
+  const onRoomClick = (room: string) => {
+    setRoom(room);
+    const idx = array.findIndex((xx) => xx.room === room);
+    array[idx].unread = 0;
   };
 
   return (
@@ -68,10 +67,11 @@ function Rooms({
             placeholder="RoomName"
             value={roomName}
             onChange={(e) => setRoomName(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleAddRoomEvent(e)}
           />
           <button
             className="cursor-pointer bg-orange-800 p-2 text-lg hover:bg-orange-600"
-            onClick={(e) => handleClick(e)}
+            onClick={(e) => handleAddRoomEvent(e)}
           >
             Add
           </button>
@@ -79,25 +79,30 @@ function Rooms({
       </div>
       <div className="flex flex-col gap-2 justify-center h-[90vh]">
         {array
-          .map((xx) => xx.room)
-          .filter((room) => room !== "")
-          .map((room, idx) => (
+          // .map((xx) => xx.room)
+          .filter((xx) => xx.room !== "")
+          .map((xx, idx) => (
             <div
               key={idx}
-              className="grid grid-cols-[8fr_1fr] items-center px-2 cursor-pointer "
+              className="grid grid-cols-[8fr_1fr] items-center px-2 cursor-pointer"
             >
-              <p
+              <div
                 className={`text-xl bg-${getColor(
                   array,
-                  room
-                )}-500 text-center py-2 rounded-2xl`}
-                onClick={() => setRoom(room)}
+                  xx.room
+                )}-500 text-center py-2 rounded-2xl flex justify-center items-center gap-10`}
+                onClick={() => onRoomClick(xx.room)}
               >
-                {room}
-              </p>
-              {room === "public" ? null : (
+                <p className="font-medium">{xx.room}</p>
+                {xx.unread ? (
+                  <p className="bg-black font-bold rounded-full h-10 w-10 flex justify-center items-center">
+                    {xx.unread}
+                  </p>
+                ) : null}
+              </div>
+              {xx.room === "public" ? null : (
                 <button
-                  onClick={(e) => handleDelete(e, room)}
+                  onClick={(e) => handleRoomDelete(e, xx.room)}
                   className="bg-gray-400 cursor-pointer flex justify-center rounded-xl p-2"
                 >
                   <svg

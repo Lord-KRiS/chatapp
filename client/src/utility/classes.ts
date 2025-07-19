@@ -12,9 +12,6 @@ export const colors = [
 
 export const getColor = (array: arrayType[], curRoom: string) => {
   const idx = array.map((xx) => xx.room).findIndex((room) => room === curRoom);
-
-  console.log(colors[idx % colors.length]);
-
   return colors[idx % colors.length];
 };
 
